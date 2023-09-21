@@ -1,0 +1,39 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TokenType {
+  CONFIRMATION_EMAIL
+  RESET_PASSWORD
+}
+
+model User {
+  id        String   @id @default(uuid())
+  firstName String
+  lastName  String
+  username  String?  @unique
+  password  String
+  email     String   @unique
+  verified  Boolean  @default(false)
+  tokens    Token[]
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+model Token {
+  id        String    @id @default(uuid())
+  token     String    @unique
+  expires   DateTime
+  isValid   Boolean   @default(true)
+  type      TokenType
+  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String?
+  updatedAt DateTime  @updatedAt
+  createdAt DateTime  @default(now())
+}
