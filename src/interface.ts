@@ -11,7 +11,7 @@ export type TokenType = {
 };
 
 export type LoginResponse = Omit<User, 'password'> & TokenType;
-export type RegisterResponse = Omit<User, 'password'> & TokenType;
+export type SignUpResponse = Omit<User, 'password'> & TokenType;
 
 export type AuthServiceType = {
   register(body: Omit<User, 'id'>): Promise<LoginResponse>;

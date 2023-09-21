@@ -1,7 +1,6 @@
 import { Response, NextFunction } from 'express';
 import { AuthRequest, JwtPayload } from '../interface';
 import Jwt from '../utils/jwt';
-import { Exception, asyncHandler } from '../helpers';
 
 class AuthMiddleware {
   authorize(req: AuthRequest, res: Response, next: NextFunction) {
@@ -28,20 +27,6 @@ class AuthMiddleware {
       throw new Error(`Invalid Token`);
     }
     next();
-  }
-
-  authorizeRole(...roles: string[]) {
-    if (typeof roles === 'string') {
-      roles = [roles];
-    }
-    return asyncHandler(
-      (req: AuthRequest, res: Response, next: NextFunction) => {
-        if (roles.length && !roles.includes((req.user as JwtPayload).role)) {
-          new Exception('Unauthorized to access this route', 401);
-        }
-        next();
-      }
-    );
   }
 }
 

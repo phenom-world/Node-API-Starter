@@ -1,4 +1,4 @@
-import { AuthServiceType, LoginResponse, RegisterResponse } from '../interface';
+import { AuthServiceType, LoginResponse, SignUpResponse } from '../interface';
 import { User } from '@prisma/client';
 import { AuthRepository } from '../repository';
 import { Exception } from '../helpers';
@@ -6,16 +6,15 @@ import Jwt from '../utils/jwt';
 import PasswordUtils from '../utils/password';
 
 class AuthService implements AuthServiceType {
-  async register(body: Omit<User, 'id'>): Promise<RegisterResponse> {
+  async register(body: Omit<User, 'id'>): Promise<SignUpResponse> {
     let user = await AuthRepository.findByEmail(body.email);
     if (user) {
       new Exception('user already exists', 400);
     }
+
     body.password = await PasswordUtils.hashPassword(body.password);
     user = await AuthRepository.createUser(body);
-
     const { accessToken, refreshToken } = Jwt.generateAccessTokens(user.id);
-
     if (user.password) {
       // @ts-ignore
       delete user.password;

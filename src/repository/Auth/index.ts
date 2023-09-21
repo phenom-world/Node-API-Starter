@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 class AuthRepository {
   async createUser(data: Omit<User, 'id'>): Promise<User> {
     const token = Utils.tokenGenerator();
-    const result = await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         ...data,
         tokens: {
@@ -20,7 +20,7 @@ class AuthRepository {
         },
       },
     });
-    return result;
+    return user;
   }
 
   async findById(id: string): Promise<User | null> {
